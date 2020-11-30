@@ -4,6 +4,22 @@ import numpy as np
 import torch 
 import collections
 
+# Define the parameters for Deep-Q Learning
+EPSILON = 0.9999
+EPSILON_DECAY = 0.9999
+EPISODE_LENGTH = 600
+K = 5 # Episode interval to update the Target Network
+MINIBATCH_SIZE = 100
+BUFFER_SIZE = 5000
+EPSILON_GREEDY_START_STEP = 3000
+CONTINUOUS_ACTION = 0.02
+WEIGHT_EPSILON = 0.0005
+WEIGHT_ALPHA = 0.7
+EPSILON_CONTROL = True
+DISTANCE_ALPHA = 3.0
+RANDOM_ACTIONS_END_EPISODE = 250
+GREEDY_STEPS = 100
+
 
 class Agent:
 

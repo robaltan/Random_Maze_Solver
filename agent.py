@@ -20,6 +20,65 @@ DISTANCE_ALPHA = 3.0
 RANDOM_ACTIONS_END_EPISODE = 250
 GREEDY_STEPS = 100
 
+class PrioritisedReplayBuffer:
+    # Prioritised Replay Buffer that allows the agent to learn from a minibatch
+    def __init__(self, weight_alpha, size=5000):
+        # Initialize the replay buffer
+        self.buffer = collections.deque(maxlen=size)
+        self.weights = collections.deque(maxlen=size)
+        self.size = size
+        self.weight_alpha = weight_alpha
+
+    def calculate_transition_weight(self, transition, dqn):
+        # Extract (S, A, R, S')
+        # Use only if you haven't started using minibatch
+        (state, action, reward, prime_state) = transition
+        state_tensor = torch.tensor(state, dtype=torch.float32)
+        prime_state_tensor = torch.tensor(prime_state, dtype=torch.float32)
+
+        # Get the Q-function for the given state and action
+        q_value = dqn.q_network.forward(state_tensor)[action]
+        # Get the Q-function values with the Q-Network and the next state
+        q_values_prime = dqn.q_network(prime_state_tensor)
+
+        # Calculate prediction
+        prediction = reward + q_values_prime.max()
+
+        # Calculate weight
+        weight = abs(prediction - q_value).detach().numpy() + WEIGHT_EPSILON
+        return weight
+
+    def add_transition(self, transition, dqn):
+        # Adds the transition to the buffer
+        if self.buffer == self.size * 2:
+            self.buffer.popleft()
+            self.weights.popleft()
+        self.buffer.append(transition)
+        if (len(self.buffer)  == 1):
+            self.weights.append(self.calculate_transition_weight(transition, dqn))
+        else:
+            # Assign the largest weight possible because this is a new weight
+            self.weights.append(max(self.weights))
+
+    def sample_minibatch(self, minibatch_size):
+        # Sample a minibatch without any replacements
+        # Calculate the probability vector
+        weights = np.power(self.weights, WEIGHT_ALPHA)
+        probabilities = np.array(weights / np.sum(weights))
+        indices = np.random.choice(len(self.buffer), minibatch_size, replace=False, p=probabilities)
+        states, actions, rewards, state_prime = zip(*[self.buffer[i] for i in indices])
+        return (np.array(states), np.array(actions), np.array(rewards,dtype=np.float32), np.array(state_prime)), indices
+    
+    def get_size(self):
+        # Return the size of the replay buffer
+        return len(self.buffer)
+
+    def update_weights(self, weights, indices):
+        # Updates the weights of the buffer with new 
+        new_weights = weights.detach().numpy()
+        for i in range(new_weights.shape[0]):
+            self.weights[indices[i]] = new_weights[i]
+
 
 class Agent:
 

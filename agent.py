@@ -79,6 +79,106 @@ class PrioritisedReplayBuffer:
         for i in range(new_weights.shape[0]):
             self.weights[indices[i]] = new_weights[i]
 
+# The Network class inherits the torch.nn.Module class, which represents a neural network.
+class Network(torch.nn.Module):
+
+    # The class initialisation function. This takes as arguments the dimension of the network's input (i.e. the dimension of the state), and the dimension of the network's output (i.e. the dimension of the action).
+    def __init__(self, input_dimension, output_dimension):
+        # Call the initialisation function of the parent class.
+        super(Network, self).__init__()
+        # Define the network layers. This example network has two hidden layers, each with 100 units.
+        self.layer_1 = torch.nn.Linear(in_features=input_dimension, out_features=100)
+        self.layer_2 = torch.nn.Linear(in_features=100, out_features=100)
+        self.layer_3 = torch.nn.Linear(in_features=100, out_features=100)
+        self.layer_4 = torch.nn.Linear(in_features=100, out_features=100)
+        self.layer_5 = torch.nn.Linear(in_features=100, out_features=100)
+        self.layer_6 = torch.nn.Linear(in_features=100, out_features=100)
+        self.layer_7 = torch.nn.Linear(in_features=100, out_features=100)
+        self.output_layer = torch.nn.Linear(in_features=100, out_features=output_dimension)
+
+    # Function which sends some input data through the network and returns the network's output. In this example, a ReLU activation function is used for both hidden layers, but the output layer has no activation function (it is just a linear layer).
+    def forward(self, input):
+        layer_1_output = torch.nn.functional.relu(self.layer_1(input))
+        layer_2_output = torch.nn.functional.relu(self.layer_2(layer_1_output))
+        layer_3_output = torch.nn.functional.relu(self.layer_3(layer_2_output))
+        layer_4_output = torch.nn.functional.relu(self.layer_4(layer_3_output))
+        layer_5_output = torch.nn.functional.relu(self.layer_5(layer_4_output))
+        layer_6_output = torch.nn.functional.relu(self.layer_6(layer_5_output))
+        layer_7_output = torch.nn.functional.relu(self.layer_7(layer_6_output))
+        output = self.output_layer(layer_7_output)
+        return output
+
+# The DQN class determines how to train the above neural network.
+class DQN:
+
+    # The class initialisation function.
+    def __init__(self):
+        # Create a Q-network, which predicts the q-value for a particular state.
+        self.q_network = Network(input_dimension=2, output_dimension=6)
+        # Create a Target-network, which predicts the q-value for a particular, and helps us save the earlier model
+        self.target_network = Network(input_dimension=2, output_dimension=6)
+        # Define the replace buffer
+        self.buffer = PrioritisedReplayBuffer(size=BUFFER_SIZE, weight_alpha=WEIGHT_ALPHA)
+        # Define the optimiser which is used when updating the Q-network. The learning rate determines how big each gradient step is during backpropagation.
+        self.optimiser = torch.optim.Adam(self.q_network.parameters(), lr=0.001)
+        # Load the Q-network to the Target Network
+        self.target_network.load_state_dict(self.q_network.state_dict())
+
+    # Function that is called whenever we want to train the Q-network. Each call to this function takes in a transition tuple containing the data we use to update the Q-network.
+    def train_q_network(self, minibatch_size):
+        # Set all the gradients stored in the optimiser to zero.
+        self.optimiser.zero_grad()
+
+        # Get a minibatch
+        minibatch, indices = self.buffer.sample_minibatch(minibatch_size)
+        # Calculate the loss for this transition.
+        loss = self._calculate_loss(minibatch, indices)
+        # Compute the gradients based on this loss, i.e. the gradients of the loss with respect to the Q-network parameters.
+        loss.backward()
+        # Take one gradient step to update the Q-network.
+        self.optimiser.step()
+        # Return the loss as a scalar
+        return loss.item()
+
+    # Function to calculate the loss for a particular transition.
+    def _calculate_loss(self, minibatch, indices):
+        # Define the tensors
+        state_tensor = torch.tensor(minibatch[0], dtype=torch.float32) # state tensor
+        prime_state_tensor = torch.tensor(minibatch[3], dtype=torch.float32) # state prime tensor
+        actions_tensor = torch.tensor(minibatch[1], dtype=torch.int64) # action tensor
+        reward_tensor = torch.tensor(minibatch[2], dtype=torch.float32) # reward tensor
+
+        # Get the Q-function values
+        q_values = self.q_network.forward(state_tensor)
+        q_values_prime  = self.q_network.forward(prime_state_tensor)
+
+        # Get the Q-function values with the Target Network and the next state
+        target_values_prime = self.target_network(prime_state_tensor) # Q_hat(S',a)
+        target_values_prime_best_action = torch.argmax(q_values_prime, 1) # argmax_a Q_hat(S', a)
+
+        # max_q_next_state = torch.max(q_values_prime, 1)[0].detach() # pick it across the actions tensor
+        max_q_next_state = torch.gather(q_values_prime, 1, target_values_prime_best_action.unsqueeze(-1)).squeeze(-1)  # Q(S', argmax_a Q_hat(S, a))
+
+        # Pick the Q values with the best action
+        q_values_best_action = torch.gather(q_values, 1, actions_tensor.unsqueeze(-1)).squeeze(-1) # Q(S,A)
+        
+        # Find the prediction tensor
+        # R + Q(S', argmax_a Q_hat(S, a))
+        # Make the prediction
+        prediction = torch.add(reward_tensor,max_q_next_state, alpha=0.9)
+
+        # Update the weights of the batch
+        weights = torch.abs(torch.subtract(prediction, q_values_best_action) + WEIGHT_EPSILON)
+        self.buffer.update_weights(weights, indices)
+
+        # Calculate loss
+        loss = torch.nn.MSELoss()(prediction, q_values_best_action)
+        return loss
+
+
+    def update_target_network(self):
+        # Updates the Q-Network
+        return self.target_network.load_state_dict(self.q_network.state_dict())
 
 class Agent:
 

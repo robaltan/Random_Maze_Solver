@@ -1,6 +1,8 @@
 # Random Maze Solver
 A Reinforcement Learning agent, programmed in Python, that utilizes Double Q-Learning, 
-Prioritized Experience Replay Buffer, and Early Stopping to solve a random maze. 
+Prioritized Experience Replay Buffer, and Early Stopping to solve a random maze. This agent was able to
+solve the hardest mazeon Reinforcement Learning coursework @Imperial College London's Reinforcement
+Learning class, which is solved by a tiny fraction of the class.
 
 ## Required Libraries
 * PyTorch
@@ -23,4 +25,4 @@ python train_and_test.py
 
 ## What's Next?
 
-Hyperparameter tuning and using different combinations of Reinforcement Learning methods is very important for the convergence of such algorithms. Therefore, designing a front-end interface where a user can define such variables would be helpful for visualization purposes, and deploying the front-end somewhere, so that everyone has access to it.
+Hyperparameter tuning and using different combinations of Reinforcement Learning methods is very important for the convergence of such algorithms. Therefore, designing a front-end interface where a user can define such variables would be helpful for visualization purposes, and deploying the front-end somewhere, so that everyone has access to it. Implementing methods from state-of-art papers might improve the performance of the agent drastically. 

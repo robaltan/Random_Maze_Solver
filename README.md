@@ -1,8 +1,8 @@
 # Random Maze Solver
 A Reinforcement Learning agent, programmed in Python, that utilizes Double Q-Learning, 
 Prioritized Experience Replay Buffer, and Early Stopping to solve a random maze. This agent was able to
-solve the hardest mazeon Reinforcement Learning coursework @Imperial College London's Reinforcement
-Learning class, which is solved by a tiny fraction of the class.
+solve the hardest maze on Reinforcement Learning coursework @Imperial College London's Reinforcement
+Learning class.
 
 ## Required Libraries
 * PyTorch

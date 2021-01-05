@@ -14,6 +14,11 @@ parameters are defined by the developer, but the user could modify them to see t
 we employ a really complex neural network with 7 layers, it made sense to perform early stopping; however, this might not
 apply to some other RL environments. 
 
+The agent is able to solve some of tha mazes that are classified as *hard*. In the following picture, the agent was able to
+learn to pass multiple wall barriers without any prior knowledge.
+
+![alt text](/Users/altantutar/Desktop/github/Random_Maze_Solver/images/solved_maze.png)
+
 ## Testing
 
 To see how your agent performs, you should run the following command for the graphics package. In this way, you could see how your agent is performing in 600 seconds (relatively 10 minutes). It's useful to see the behavior of your agent.

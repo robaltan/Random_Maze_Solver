@@ -8,6 +8,13 @@ learn to pass multiple wall barriers without any prior knowledge. It was also ab
 
 ![Agent Performance](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/solved_maze.png)
 
+## Q-Learning
+
+In this application, we used Deep Q-Learning to train the agent to understand the best policy given a location (x, y). Our agent used a neural network architecture that accepted a tuple of dimension 2, where the agent is currently at, and 
+had 6 hidden layers of 100 edges in and out, and a final layer that predicted rewards for 6 different actions - right, up, bottom, left, diagonal up right, diagonal bottom right. 
+
+![Deep Q-Learning](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/deep_q_learning.png)
+
 ## Required Libraries
 * PyTorch
 * NumPy

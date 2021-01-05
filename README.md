@@ -8,16 +8,25 @@ learn to pass multiple wall barriers without any prior knowledge. It was also ab
 
 ![Agent Performance](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/solved_maze.png)
 
-## Q-Learning
+## Deep Q-Learning
 
-In this application, we used Deep Q-Learning to train the agent to understand the best policy given a location (x, y). Our agent used a neural network architecture that accepted a tuple of dimension 2, where the agent is currently at, and 
+We used Deep Q-Learning to train the agent to understand the best policy given a location (x, y). Our agent used a neural network architecture that accepted a tuple of dimension 2, where the agent is currently at, and 
 had 6 hidden layers of 100 edges in and out, and a final layer that predicted rewards for 6 different actions - right, up, bottom, left, diagonal up right, diagonal bottom right. 
 
 ![Deep Q-Learning](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/deep_q_learning.png)
 
+To make sure that learning is stable, we used a target network, which is a copy of the estimated value function that is held fixed to serve as a stable target for some number of steps. To make sure that the agent learns effectively,
+we utilized prioritizing experience, which allows replaying important transitions more frequently.
+
+The agent remembered the actions it took, and the rewards it received, and it trained the network with a minibatch of size 100. The loss for every action was calculated by using the following formula
+which resembles that of normal Q-Learning. We find the prediction for a given minibatch as $P = R + Q(S', \text{argmax}_a Q_hat(S, a))$ where $R$ is the reward tensor, $Q_hat$ is the target network, a is the best action
+for a given state, and S is the state tensor. Then, the loss is calculated as $\mid P - Q(S,A) \mid$. For implementation, see lines 175 of [agent.py](https://github.com/robaltan/Random_Maze_Solver/blob/main/agent.py).
+
+
 ## Required Libraries
 * PyTorch
 * NumPy
+* cv2 (*mainly for visualizations*)
 
 ## Objective
 

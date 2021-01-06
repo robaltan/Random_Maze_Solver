@@ -19,7 +19,7 @@ To make sure that learning is stable, we used a target network, which is a copy 
 we utilized prioritizing experience, which allows replaying important transitions more frequently.
 
 The agent remembered the actions it took, and the rewards it received, and it trained the network with a minibatch of size 100. The loss for every action was calculated by using the following formula
-which resembles that of normal Q-Learning. We find the prediction for a given minibatch as $P = R + Q(S', \text{argmax}_a Q_hat(S, a))$ where $R$ is the reward tensor, $Q_hat$ is the target network, a is the best action
+which resembles that of normal Q-Learning. We find the prediction for a given minibatch as $$P = R + Q(S', \text{argmax}_a Q_hat(S, a))$$ where $R$ is the reward tensor, $$Q_{hat}$$ is the target network, a is the best action
 for a given state, and S is the state tensor. Then, the loss is calculated as $\mid P - Q(S,A) \mid$. For implementation, see lines 175 of [agent.py](https://github.com/robaltan/Random_Maze_Solver/blob/main/agent.py).
 
 

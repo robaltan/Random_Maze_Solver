@@ -3,7 +3,7 @@ A Reinforcement Learning agent, programmed in Python, that utilizes Double Q-Lea
 Prioritized Experience Replay Buffer, and Early Stopping to solve a random maze. 
 
 The agent is able to solve some of the mazes that are classified as *hard* meaning that there are multiple barriers that the agent needs to learn, and therefore does not get stuck in the local minimum. In the following picture, the agent was able to
-learn to pass multiple wall barriers without any prior knowledge. It was also able to qualify for the competition round for the Reinforcement Learning graduate-level class that only selected 9% of the best agents.
+learn to pass multiple wall barriers without any prior knowledge. It was also able to qualify for the competition round for the Reinforcement Learning graduate-level class that only selected 9% of fthe best agents.
 
 ![Agent Performance](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/solved_maze.png)
 
@@ -14,7 +14,7 @@ had 6 hidden layers of 100 edges in and out, and a final layer that predicted re
 
 ![Deep Q-Learning](https://github.com/robaltan/Random_Maze_Solver/blob/main/images/deep_q_learning.png)
 
-To make sure that learning is stable, we used a target network, which is a copy of the estimated value function that is held fixed to serve as a stable target for some number of steps. To make sure that the agent learns effectively, we utilized prioritized experience, which allows replaying important transitions more frequently. The agent remembered the actions it took, and the rewards it received, and it trained the network with a minibatch of size 100. For more details on the presentation, see [agent.py](https://github.com/robaltan/Random_Maze_Solver/blob/main/agent.py).
+To make sure that learning is stable, we used a target network, which is a copy of the estimated value function that is held fixed to serve as a stable target for some number of steps. To make sure that the agent learns effectively, we utilized prioritized experience, which allows replaying important transitions more frequently. The agent remembered the actions it took, and the rewards it received, and it trained the network with a minibatch of size 100. For more details on the code, see [agent.py](https://github.com/robaltan/Random_Maze_Solver/blob/main/agent.py).
 
 
 ## Required Libraries

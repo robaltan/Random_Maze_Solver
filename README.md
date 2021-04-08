@@ -1,7 +1,6 @@
 # Random Maze Solver
 A Reinforcement Learning agent, programmed in Python, that utilizes Double Q-Learning, 
 Prioritized Experience Replay Buffer, and Early Stopping to solve a random maze. 
-Learning class.
 
 The agent is able to solve some of the mazes that are classified as *hard* meaning that there are multiple barriers that the agent needs to learn, and therefore does not get stuck in the local minimum. In the following picture, the agent was able to
 learn to pass multiple wall barriers without any prior knowledge. It was also able to qualify for the competition round for the Reinforcement Learning graduate-level class that only selected 9% of the best agents.
